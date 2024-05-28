@@ -1,0 +1,523 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <cstdlib>
+#include <conio.h>
+using namespace std;
+
+class BenXe {
+public:
+    string maSo;
+    string tenBen;
+    string loaixe;
+    string tuyenduong;
+    string giave;
+    string soluong;
+    ~BenXe() {}
+};
+
+class Khachhang {
+public:
+    string id;
+    string hoten;
+    string maxe;
+    string ve;
+    ~Khachhang() {}
+};
+
+class Xetrong {
+public:
+    string maSo;
+    string tenBen;
+    string loaixe;
+    string tuyenduong;
+    string giave;
+    string soluong;
+    ~Xetrong() {}
+};
+//xoa man hinh
+void pressAnyKey() {
+    cout << "\n\nBam phim bat ky de tiep tuc...";
+    getch();
+    system("cls");
+    //system("clear");
+}
+//Khach dat ve 
+void datve(Khachhang Khach[], BenXe xe[], int madon, int soluongxe) {
+    string maChuyenXe;
+    bool xeTonTai = false;
+    Khach[madon].id = madon;
+    cout << "\nNhap ho ten khach hang: ";
+	cin.ignore(); 
+    getline(cin, Khach[madon].hoten);
+    while (!xeTonTai) {
+        cout << "Nhap ma so chuyen xe can dat: ";
+        cin >> maChuyenXe;
+        // Kiểm tra mã số chuyến xe
+        for (int i = 0; i < soluongxe; i++) {
+            if (xe[i].maSo == maChuyenXe) {
+                xeTonTai = true;
+                break;
+            }
+        }
+        if (!xeTonTai) {
+            cout << "Ma so chuyen xe khong ton tai. Vui long nhap lai.\n";
+        }
+    }
+    Khach[madon].maxe = maChuyenXe;
+    cout << "Nhap so luong ve: "; 
+    cin >> Khach[madon].ve;
+  	  while (stoi(Khach[madon].ve) > stoi(xe[madon].soluong)) { // kiểm tra số lượng vé
+        cout << "So luong ve khong du. Nhap lai: ";
+        cin >> Khach[madon].ve;
+    }
+}
+//So luong ghe con trong
+void ghetrong(Khachhang Khach[],BenXe xe[],Xetrong xetrong[], int slxe,int madon){
+    for(int j=0;j<slxe;j++){
+      int soluongve=0;
+       for(int i=0;i<madon;i++){
+            if(Khach[i].maxe==xe[j].maSo){
+                soluongve=soluongve+stoi(Khach[i].ve);
+            }
+        }
+        xetrong[j].soluong=to_string(stoi(xe[j].soluong)-soluongve);
+    }
+};
+//Them chuyen xe
+ void them(BenXe xe[], int soluongxe){
+    cout<<"\nNhap ma so xe:";
+	cin>>xe[soluongxe].maSo;
+	cin.ignore();
+    cout<<"Nhap ten ben:";  
+	getline(cin,xe[soluongxe].tenBen);
+    cout<<"Nhap loai xe (1.Giuong nam / 2.Ghe thuong ):"; 
+	cin>>xe[soluongxe].loaixe;
+    while(stoi(xe[soluongxe].loaixe)<1 ||stoi(xe[soluongxe].loaixe)>2 ){
+    cout<<"Nhap lai loai xe (1.Giuong nam / 2.Ghe thuong )"; 
+	cin>>xe[soluongxe].loaixe;
+    }
+    cin.ignore();
+    cout<<"Nhap tuyen duong:";
+	getline(cin,xe[soluongxe].tuyenduong);
+    cout<<"Nhap gia ve xe:"; 
+	cin>>xe[soluongxe].giave;
+    cout<<"Nhap so luong ghe ngoi:";
+	cin>>xe[soluongxe].soluong;
+};
+//Them chuyen xe vao danh sach xe xetrong
+void chuyengiao(BenXe xe[],Xetrong xetrong[], int slxe){
+  for(int i=0; i<=slxe;i++){
+      xetrong[i].maSo=xe[i].maSo;
+      xetrong[i].tenBen=xe[i].tenBen;
+      xetrong[i].loaixe=xe[i].loaixe;
+      xetrong[i].tuyenduong=xe[i].tuyenduong;
+      xetrong[i].giave=xe[i].giave;
+      xetrong[i].soluong=xe[i].soluong;
+  }  
+};
+//cap nhat chuyen xe
+void capnhatthongtin(BenXe xe[], int soluongxe, string maso){
+    for(int i=0; i<soluongxe;i++){
+        if(xe[i].maSo==maso){
+    cout<<"\nCap nhat chuyen xe ma so "<<maso;
+    cin.ignore();
+    cout<<"\nNhap ten ben:"; 
+    getline(cin,xe[soluongxe].tenBen);
+    cout<<"Nhap loai xe (1.Giuong nam / 2.Ghe thuong )"; 
+	cin>>xe[i].loaixe;
+    while(stoi(xe[i].loaixe)<1 ||stoi(xe[i].loaixe)>2 ){
+            cout<<"Nhap lai loai xe (1.Giuong nam / 2.Ghe thuong )"; 
+			cin>>xe[i].loaixe;
+    }
+    cin.ignore();
+    cout<<"Nhap tuyen duong:";
+    getline(cin,xe[soluongxe].tuyenduong);
+    cout<<"Nhap gia ve xe:"; cin>>xe[i].giave;
+    cout<<"Nhap so luong ghe ngoi:";cin>>xe[i].soluong; 
+        }
+    }
+};
+//Cap nhat danh sach cho danh sach ghe trong
+void capnhaxetrong(BenXe xe[],Xetrong xetrong[], int soluongxe, string maso){
+    for(int i=0; i<soluongxe;i++){
+        if(xe[i].maSo==maso){
+      xetrong[i].maSo=xe[i].maSo;
+      xetrong[i].tenBen=xe[i].tenBen;
+      xetrong[i].loaixe=xe[i].loaixe;
+      xetrong[i].tuyenduong=xe[i].tuyenduong;
+      xetrong[i].giave=xe[i].giave;
+      xetrong[i].soluong=xe[i].soluong;
+    }
+};
+};
+// Xoa chuyen xe
+void xoa(BenXe xe[], Xetrong xetrong[], int& soluongxe, const string& maso) {
+    int vitri = -1;
+    for (int i = 0; i < soluongxe; i++) {
+        if (xe[i].maSo == maso) {
+            vitri = i;
+            break;
+        }
+    }   
+    if (vitri == -1) {
+        cout << "Khong tim thay ma so xe " << maso << endl;
+        return;
+    }
+    for (int i = vitri; i < soluongxe - 1; i++) {
+        xe[i] = xe[i + 1];
+        xetrong[i] = xetrong[i + 1];
+    }
+    soluongxe--;
+    cout << "Da xoa chuyen xe ma so " << maso << endl;
+}
+//In ra chuyen xe
+void xuat(BenXe xe[], int i){
+    cout<<"\n|"<<setw(8)<<xe[i].maSo<<"|"<<setw(14)<<xe[i].tenBen<<"|"<<setw(8)<<xe[i].loaixe<<"|"<<setw(22)<<xe[i].tuyenduong
+    <<"|"<<setw(12)<<xe[i].giave<<"|"<<setw(12)<<xe[i].soluong<<"|"<<endl;
+    };
+//Tim tuyen duong cua chuyen xe
+void tuyen(BenXe xe[], int soluongxe, string tuyend ){
+    cout<<"\n|    MSxe|           Ben| Loai xe|            Tuyenduong|       Giave|    So luong|"<<endl;
+  for(int i=0;i<soluongxe;i++){
+      if(xe[i].tuyenduong == tuyend){
+          xuat(xe,i);
+      }
+  }
+};
+//Tim gia xe cua chuyen xe
+  void ve(BenXe xe[], int soluongxe, string gve ){
+      cout<<"\n|    MSxe|           Ben| Loai xe|            Tuyenduong|       Giave|    So luong|"<<endl;
+  for(int i=0;i<soluongxe;i++){
+      if(xe[i].giave == gve){
+          xuat(xe,i);
+      }
+  } 
+};
+//Tim kiem chuyen xe theo loai Xe
+void loaixe(BenXe xe[], int soluongxe, string loai ){
+    cout<<"\n|    MSxe|           Ben| Loai xe|            Tuyenduong|       Giave|    So luong|"<<endl;
+  for(int i=0;i<soluongxe;i++){
+      if(xe[i].loaixe == loai){
+          xuat(xe,i);
+      }
+  } 
+};
+//In danh sach chuyen xe 
+void dsxe(BenXe xe[],int soluongxe){
+    cout<<"\n|    MSxe|           Ben| Loai xe|            Tuyenduong|       Giave|    So luong|"<<endl;
+    for(int i=0;i<soluongxe;i++){
+    cout<<"\n|"<<setw(8)<<xe[i].maSo<<"|"<<setw(14)<<xe[i].tenBen<<"|"<<setw(8)<<xe[i].loaixe<<"|"<<setw(22)<<xe[i].tuyenduong
+    <<"|"<<setw(12)<<xe[i].giave<<"|"<<setw(12)<<xe[i].soluong<<"|"<<endl;
+    };
+};
+//in danh sách ghế trống
+void dsghetrong(Xetrong xe[],int soluongxe){
+    cout<<"\n|    MSxe|           Ben| Loai xe|            Tuyenduong|       Giave|    So luong|"<<endl;
+    for(int i=0;i<soluongxe;i++){
+    cout<<"\n|"<<setw(8)<<xe[i].maSo<<"|"<<setw(14)<<xe[i].tenBen<<"|"<<setw(8)<<xe[i].loaixe<<"|"<<setw(22)<<xe[i].tuyenduong
+    <<"|"<<setw(12)<<xe[i].giave<<"|"<<setw(12)<<xe[i].soluong<<"|"<<endl;
+    };   
+};
+//Doanh thu dat duoc
+void doanhthu(Khachhang Khach[],BenXe xe[],int slxe,int madon){
+    int doanhthu=0;
+    for(int i=0;i<madon;i++){
+        for(int j=0;j<slxe;j++){
+            if(Khach[i].maxe==xe[j].maSo){
+                doanhthu=doanhthu+stoi(xe[j].giave)*stoi(Khach[i].ve);
+            }
+        }
+    };
+    cout<<"\nTong doanh thu den hien tai la: "<<doanhthu;
+};
+//Luu thong tin vao file
+void ghiFile(const char dschuyenxe[], const char dsxetrong[], const char dsdonve[], int soluongxe, int madon, BenXe xe[], Khachhang Khach[], Xetrong xetrong[]) {
+    ofstream fout1(dschuyenxe);
+    if (!fout1.is_open()) {
+        cout << "Khong mo duoc file " << dschuyenxe << endl;
+        return;
+    }
+    ofstream fout2(dsxetrong);
+    if (!fout2.is_open()) {
+        cout << "Khong mo duoc file " << dsxetrong << endl;
+        fout1.close();
+        return;
+    }
+    ofstream fout3(dsdonve);
+    if (!fout3.is_open()) {
+        cout << "Khong mo duoc file " << dsdonve << endl;
+        fout1.close();
+        fout2.close();
+        return;
+    }
+
+    for (int i = 0; i < soluongxe; i++) {
+        fout1 << xe[i].maSo << "," << xe[i].tenBen << "," << xe[i].loaixe << "," << xe[i].tuyenduong << "," << xe[i].giave << "," << xe[i].soluong << endl;
+    }
+
+    for (int i = 0; i < soluongxe; i++) {
+        fout2 << xetrong[i].maSo << "," << xetrong[i].tenBen << "," << xetrong[i].loaixe << "," << xetrong[i].tuyenduong << "," << xetrong[i].giave << "," << xetrong[i].soluong << endl;
+    }
+
+    for (int i = 0; i < madon; i++) {
+        fout3 << Khach[i].hoten << "," << Khach[i].maxe << "," << Khach[i].ve << endl;
+    }
+
+    fout1.close();
+    fout2.close();
+    fout3.close();
+}
+//Lay thong tin tu file
+int docfilexe(const char dschuyenxe[],int soluongxe,BenXe xe[]) {
+    ifstream fin(dschuyenxe);
+    string maSo,tenBen,loaixe,tuyenduong,giave,soluong;
+     while (!fin.eof()){
+        getline(fin, maSo, ',');
+        getline(fin, tenBen, ',');
+        getline(fin, loaixe, ',');
+        getline(fin, tuyenduong, ',');
+        getline(fin, giave, ',');
+        getline(fin, soluong);
+        xe[soluongxe].maSo = maSo; 
+        xe[soluongxe].tenBen = tenBen; 
+        xe[soluongxe].loaixe = loaixe;
+        xe[soluongxe].tuyenduong = tuyenduong; 
+        xe[soluongxe].giave = giave; 
+        xe[soluongxe].soluong=soluong;
+        soluongxe++;}
+    soluongxe--;
+    return soluongxe;
+};
+// file khach Khachhang
+int docfilekhach( const char dsdonve[],Khachhang Khach[], int madon){
+ ifstream fin(dsdonve);
+ string id,hoten,maxe,ve;
+    while (!fin.eof()){
+        getline(fin,hoten, ',');
+        getline(fin,maxe, ',');
+        getline(fin,ve);
+        Khach[madon].hoten = hoten;
+        Khach[madon].maxe = maxe;
+        Khach[madon].ve= ve; 
+        madon++;
+    }
+    madon--;
+    return madon;
+};   
+//RESET du lieu
+void reset(const char dschuyenxe[], const char dsxetrong[], const char dsdonve[]) {
+     ofstream fout1(dschuyenxe);
+     ofstream fout2(dsxetrong);
+     ofstream fout3(dsdonve);
+         fout1<<"";
+         fout2<<"";
+         fout3<<"";
+
+    fout1.close();
+    fout2.close();
+    fout3.close();
+};
+// ve man hinh chinh 
+void vemenu(){
+       int key;
+     while(key!=1){
+     cout<<"\nNhap ( 1.De ve menu chinh ):";cin>>key;
+     };
+    pressAnyKey();
+};
+int main() {
+    char dschuyenxe[] = "danhsachxe.txt";
+    char dsxetrong[] = "danhsachxetrong.txt";
+    char dsdonve[] = "danhsachdonve.txt";
+    BenXe xe[1000];
+    Khachhang Khach[1000];
+    Xetrong xetrong[1000];
+    int madon = 0;
+    int soluongxe = 0;
+	int luachon;
+	soluongxe=docfilexe(dschuyenxe,soluongxe,xe);
+    madon=docfilekhach(dsdonve,Khach,madon);
+    chuyengiao(xe,xetrong,soluongxe);
+    ghetrong(Khach,xe,xetrong,soluongxe,madon);
+    do {
+        cout << "\nCHUONG TRINH QUAN LY BEN XE \n";
+        cout << "*************************MENU**************************\n";
+        cout << "**  1. Them chuyen xe.                               **\n";
+        cout << "**  2. Cap nhat thong tin chuyen xe bang maSo.       **\n";
+        cout << "**  3. Xoa chuyen xe bang maSo.                      **\n";
+        cout << "**  4. Tim kiem chuyen xe theo tuyen.                **\n";
+        cout << "**  5. Tim kiem chuyen xe theo gia ve.               **\n";
+        cout << "**  6. Tim kiem chuyen xe theo loai xe               **\n";
+        cout << "**      1.Giuong nam / 2. Ghe thuong.                **\n";
+        cout << "**  7. Hien thi danh sach chuyen xe .                **\n";
+        cout << "**  8. Dat ve cho hanh khach.                        **\n";
+        cout << "**  9. So luong khach dat ve.                        **\n";
+        cout << "**  10.Doanh thu dat duoc.                           **\n";
+        cout << "**  11.So luong ghe con trong.                       **\n";
+        cout << "**  12.Luu thong tin vao file luu tru                **\n";
+        cout << "**  13.Reset toan bo du lieu trong file luu tru      **\n";
+        cout << "**  0. Thoat                                         **\n";
+        cout << "*******************************************************\n";
+        cout << "Nhap tuy chon: ";
+        cin >> luachon;
+        switch (luachon) {
+            case 1: {
+                cout << "\n1. Them chuyen xe .";
+                them(xe, soluongxe);
+                chuyengiao(xe, xetrong, soluongxe);
+                ghetrong(Khach, xe, xetrong, soluongxe, madon);
+                cout << "\nThem chuyen xe thanh cong!";
+                soluongxe++;
+                vemenu();
+                break;
+            }
+            case 2: {
+                string ms;
+                int check = 0;
+                cout << "\n2. Cap nhat thong tin chuyen xe. ";
+                dsxe(xe, soluongxe);
+                cout << "\n Nhap ma so can cap nhat : ";
+                cin >> ms;
+                for (int i = 0; i < soluongxe; i++) {
+                    if (ms == xe[i].maSo) {
+                        check = 1;
+                        capnhatthongtin(xe, soluongxe, ms);
+                        capnhaxetrong(xe, xetrong, soluongxe, ms);
+                    }
+                }
+                while (check == 0) {
+                    cout << "Khong co ma xe trong danh sach xe. Nhap lai:";
+                    cin >> ms;
+                    for (int i = 0; i < soluongxe; i++) {
+                        if (ms == xe[i].maSo) {
+                            check = 1;
+                            capnhatthongtin(xe, soluongxe, ms);
+                            capnhaxetrong(xe, xetrong, soluongxe, ms);
+                        }
+                    }
+                }
+                vemenu();
+                break;
+            }
+            
+            case 3: {
+    			string ms;
+    			int check = 0;
+    			cout << "\n3. Xoa thong tin chuyen xe. ";
+    			dsxe(xe, soluongxe);
+    			cout << "\n Nhap ma so: ";
+    			cin >> ms;
+    			for (int i = 0; i < soluongxe; i++) {
+        			if (ms == xe[i].maSo) {
+            			check = 1;
+            			xoa(xe, xetrong, soluongxe, ms);
+            			break;
+       			 	}
+   				 }
+    			if (check == 0) {
+        			cout << "Khong co ma xe trong danh sach xe. Nhap lai:";
+        			cin >> ms;
+        			for (int i = 0; i < soluongxe; i++) {
+            			if (ms == xe[i].maSo) {
+                			check = 1;
+                			xoa(xe, xetrong, soluongxe, ms);
+                			break;
+            				}
+        			}
+    			}
+    		vemenu();
+    		break;
+			}
+
+            case 4: {
+                string tuyend;
+                cout << "\n4.Thong tin chuyen xe co cung tuyen duong. ";
+                cout << "\n Nhap tuyen : ";
+                cin.ignore();
+				getline(cin,tuyend);
+                tuyen(xe, soluongxe, tuyend);
+                vemenu();
+                break;
+            }
+            case 5: {
+                string gve;
+                cout << "\n5.Thong tin chuyen xe co cung gia tien . ";
+                cout << "\n Nhap gia ve : ";
+                cin >> gve;
+                ve(xe, soluongxe, gve);
+                vemenu();
+                break;
+            }
+            case 6: {
+                string loai;
+                cout << "\n6.Thong tin chuyen xe theo loai xe . ";
+                cout << "\n Nhap loai xe ( 1.Giuong nam / 2.Ghe thuong ) : ";
+                cin >> loai;
+                loaixe(xe, soluongxe, loai);
+                vemenu();
+                break;
+            }
+            case 7: {
+                cout << "\n7.Danh sach cac chuyen xe.";
+                dsxe(xe, soluongxe);
+                vemenu();
+                break;
+            }
+            case 8: {
+   				 cout << "\n8. Khach hang dat ve xe.";
+    			datve(Khach, xe, madon, soluongxe);
+    			cout << "\nDat ve thanh cong!";
+    			ghetrong(Khach, xe, xetrong, soluongxe, madon);
+    			madon++;
+    			vemenu();
+    			break;
+    		}
+            case 9: {
+                cout << "\n9.So luong khach dat ve.";
+                cout << "\nSo luong ve da ban ra la:" << madon;
+                vemenu();
+                break;
+            }
+            case 10: {
+                cout << "\n10.Doanh thu dat duoc.";
+                doanhthu(Khach, xe, soluongxe, madon);
+                vemenu();
+                break;
+            }
+            case 11: {
+                cout << "\n11.Danh sach so luong ghe con trong cua moi chuyen xe.";
+                ghetrong(Khach, xe, xetrong, soluongxe, madon);
+                dsghetrong(xetrong,soluongxe);
+                vemenu();
+                break;
+            }
+            case 12:{
+                   cout<<"\n12.Luu thong tin vao file luu tru.";
+                   
+                   ghiFile(dschuyenxe,dsxetrong,dsdonve,soluongxe,madon,xe,Khach,xetrong);
+                   cout<<"\nghi file thanh cong";
+                   vemenu();
+                   break;}
+            case 13:{
+                    cout<<"\n13.Reset toan bo du lieu luu tru.";
+                    reset(dschuyenxe,dsxetrong,dsdonve);
+                    cout<<"\nReset du lieu thanh cong.";
+                    vemenu();
+                   break;}
+            case 0:{
+                cout << "\nBan da chon thoat chuong trinh!";
+                return 0;
+            }
+            default:{
+                cout << "\nKhong co chuc nang nay!";
+                cout << "\nHay chon chuc nang trong menu.";
+                vemenu();
+                break;
+            }
+        }
+    } while (luachon!= 0);
+    return 0;
+}
